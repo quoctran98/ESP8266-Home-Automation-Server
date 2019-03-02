@@ -4,7 +4,7 @@ A basic web server on the ESP8266 chip with some command sending and weather tra
 ## Hardware
 #### Materials
 1. ESP8266 12E NodeMCU board
-2. DHT11 (3 pins is preferred - no instructions will be provided to wire up a 4 pin DHT11)
+2. BME280 temperature, humidity, and pressure sensor
 3. Various duPont wires and a breadboard (or some alternate way of wiring up the circuit)
 
 #### Wiring
@@ -21,14 +21,23 @@ Before doing anything, we'll need to go into the espe8266_webserver.ino and defi
 3. `serverPort` is the router port the server will be hosted on.
 4. `authUsername` is the username used to log into the server.
 5. `authPassword` is the password used to log into the server. This is very insecure, so don't reuse any passwords.
-6. `int pinDHT11` is the pin connected to the DATA pin of the DHT11. The default pin is 12 or D7 (the pins may not match up).
+6. `BME_SCK`
+   `BME_MISO`
+   `BME_MOSI`
+   `BME_CS` are pins for the BME280
 7. `jsMainSource` `jsSessionSource` are explained further below
 
 #### Pointing to the JavaScript File
-The webserver sends a couple of JavaScript files to the client in order to plot charts and do a variety of other functions. The file can be served in a number of ways.
-1. **Hosting them on your own sever** - change `jsMainSource` `jsSessionSource` to the URL of the file. This is preferred if a webserver you control is available because it allows for editing the JavaScript file on the fly
-2. **Pointing to the GitHub** - change `jsMainSource` to https://raw.githubusercontent.com/quoctran98/ESP8266_WebServer/master/mainPage.js and `jsSessionSource` to https://raw.githubusercontent.com/quoctran98/ESP8266_WebServer/master/sessionIdPage.js
-3. **Minifying the scripts** - changing all `"` to `'` and minifying the script will allow it to be served as a string directly from the webserver. This requires some poking around the .ino file itself and changing the `getMainPage()` function. Future releases may include an alternate .ino file with this option.
+The webserver sends a couple of JavaScript files to the client in order to plot charts and do a variety of other functions. The file can be served in two ways.
+1. **Pointing to the GitHub** - change `useJsURLSource` to `true` to use scripts hosted by Github.
+2. **Minifying the scripts** - change `useJsURLSource` to `false` in order to used the minified scripts included in the .ino
+
+#### Setting up IFTTT Integration
+This webserver uses the Maker Webhooks provided by IFTTT.
+1. Add this applet: https://ifttt.com/applets/95730778d-home-server-weather-notification to your IFTTT account
+2. Get your Webhook key at: https://ifttt.com/services/maker_webhooks/settings. It's the string of alphanumeric following `https://maker.ifttt.com/use/` under Account Info and URL
+3. Set the Webhook key as an entry under `webhookKeyList[1]`. Notifications can be sent to multiple users if the array is extended with keys from multiple users.
+4. Change `alertLowPressure`, `alertLowPressure`, `alertLowTemperature`, `alertHighTemperature`, `alertLowHumidity`, and `alertHighHumidity` to match the parameters that match your needs. (units are in kPa, Fahrenheit, and % relative humidity, respectively)
 
 #### Installing Boards and Libraries
 To use the ESP8266 board with the Arduino IDE open up the IDE and go to `File > Preferences > Additional Boards Manager URLs` and paste in this URL: http://arduino.esp8266.com/versions/2.5.0/package_esp8266com_index.json kindly provided by the ESP8266 Community Forum. Restart the Arduino IDE and go to `Tools > Board > Boards Manager` search for "ESP8266 and click install. Now, in `Tools > Board` select the `NodeMCU 1.0 (ESP-12E Module)` board. Set the upload speed and CPU frequency to your board's (it's usually 115200 and 80 MHz, respectively).
@@ -42,7 +51,7 @@ The ESP8266 board can now be plugged in and the sketch can be uploaded to the bo
 The exact protocol will vary based on the model of the router, but the basic procedure remains the same. Accessing the router through a web browser will show the internal IP of the web server. From there, the internal IP should be reserved, so the same IP always belongs to the device. In addition, the port specified in `serverPort` should be forwarded with the internal IP, allowing the server to be accessed from your external IP. The external IPv4 address can be found from sites such as `https://www.whatismyip.com/`. The ESP8266 web server can then be accessed from `[external IP]:[port]`
 
 ## TODO
-1. Add barometer and photoresistor functionality
+1. Add photoresistor functionality
 2. Implement a more secure authenication system 
 3. Include instrucions for serving custom Boostrap HTML/CSS pages
 4. Increase page loading speeds
