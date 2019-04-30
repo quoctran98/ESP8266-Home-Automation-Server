@@ -51,7 +51,6 @@ The ESP8266 board can now be plugged in and the sketch can be uploaded to the bo
 The exact protocol will vary based on the model of the router, but the basic procedure remains the same. Accessing the router through a web browser will show the internal IP of the web server. From there, the internal IP should be reserved, so the same IP always belongs to the device. In addition, the port specified in `serverPort` should be forwarded with the internal IP, allowing the server to be accessed from your external IP. The external IPv4 address can be found from sites such as `https://www.whatismyip.com/`. The ESP8266 web server can then be accessed from `[external IP]:[port]`
 
 ## TODO
-1. Add photoresistor functionality
-2. Implement a more secure authenication system 
-3. Include instrucions for serving custom Boostrap HTML/CSS pages
-4. Increase page loading speeds
+1. Implement a more secure authenication system 
+2. Include instrucions for serving custom Boostrap HTML/CSS pages
+3. Increase page loading speeds
