@@ -1,4 +1,4 @@
-# ESP8266-Home-Automation-Server
+# ESP8266-Home-Server
 A basic web server on the ESP8266 chip with some command sending and weather tracking functionality.
 
 ## Hardware
